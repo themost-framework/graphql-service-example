@@ -3,6 +3,7 @@ import { ODataModelBuilder, EdmType } from '@themost/data';
 import { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLFloat, GraphQLBoolean, GraphQLInt } from 'graphql';
 import * as packageJson from '../package.json';
 import { TraceUtils } from '@themost/common';
+import { createHandler } from 'graphql-http/lib/use/http';
 
   /**
    * get GraphQLScalarType from EdmType
@@ -55,15 +56,7 @@ class GraphQLSchemaService extends ApplicationService {
 
   
   async getSchema() {
-    const query = new GraphQLObjectType({
-      name: 'Query',
-      fields: {
-        version: {
-          type: GraphQLString,
-          resolve: () => packageJson.version,
-        },
-      },
-    });
+    
     /**
      * get builder
      * @type {ODataModelBuilder}
@@ -81,7 +74,7 @@ class GraphQLSchemaService extends ApplicationService {
     // enumerate graphql objects and add properties
     for (const objectType of types) {
       const entityType = document.entityType.find((x) => x.name === objectType.name);
-      objectType.fields = entityType.property.reduce((previous, current) => {
+      const fields = entityType.property.reduce((previous, current) => {
         let type;
         if (/^Edm\./.test(current.type)) {
           // get primitive type
@@ -93,21 +86,41 @@ class GraphQLSchemaService extends ApplicationService {
           type = current.nullable ? GraphQLEntityType : new GraphQLNonNull(GraphQLEntityType)
         }
         // set field
+        const args = [];
         previous[current.name] = {
-          type
+          type,
+          args
         };
         return previous;
-      }, {})
+      }, {});
+      objectType._fields = fields;
     }
-    for (const entitySet of document.entityContainer.entitySet) {
-      entitySet.entityType.property.reduce((previous, current) => {
-        current.nullable
-        const field = {
-          type: current.nullable ? GraphQLString : new GraphQLNonNull(GraphQLString),
+    const addFields = document.entityContainer.entitySet.reduce((previous, current) => {
+      const name = current.name;
+      const type = types.find((x) => x.name === current.entityType.name);
+      const args = {};
+      previous[name] = {
+        type,
+        resolve: () => {
+          return [];
         }
-      }, {})
-    }
+      }
+      return previous;
+    }, {});
 
+    const fields = Object.assign({
+      Version: {
+        type: GraphQLString,
+        resolve: () => packageJson.version,
+      },
+    }, addFields);
+
+    const name = 'Query';
+    const query = new GraphQLObjectType({
+      name,
+      fields,
+    });
+    
     return new GraphQLSchema({
       query,
       types

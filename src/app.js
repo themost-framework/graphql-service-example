@@ -8,7 +8,10 @@ const app = getApplication();
  * @type {import('@themost/express').ExpressDataApplication}
  */
 const application = app.get('ExpressDataApplication');
-application.useService(GraphQLSchemaService)
+// use graphQL service
+application.useService(GraphQLSchemaService);
+// 
+application.container.next(app);
 
 // // use graphql service
 // app1.useService(GraphQLSchemaService);
