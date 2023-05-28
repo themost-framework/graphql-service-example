@@ -1,19 +1,20 @@
-import express from 'express';
-import { createHandler } from 'graphql-http/lib/use/http';
-import { schema } from './schema';
+import { GraphQLSchemaService } from './schema';
 import { getApplication } from '@themost/test';
 import path from 'path';
 
 // use @themost/test application
 const app = getApplication();
+/**
+ * @type {import('@themost/express').ExpressDataApplication}
+ */
+const application = app.get('ExpressDataApplication');
+application.useService(GraphQLSchemaService)
 
-const handler = createHandler({ schema });
-// add graphql handler
-app.use('/graphql/', handler);
-
-app.use('/query/', (req, res, next) => {
-    return res.render(path.resolve(__dirname, 'views/query'))
-});
+// // use graphql service
+// app1.useService(GraphQLSchemaService);
+app.use('/editor/', (req, res, next) => {
+    res.render(path.resolve(__dirname, 'views/graphiql/index'));
+})
 
 export {
     app
