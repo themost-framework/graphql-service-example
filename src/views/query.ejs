@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>GraphQL over HTTP</title>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/graphql-http/umd/graphql-http.min.js"
+    ></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      const client = graphqlHttp.createClient({
+        url: '/graphql/',
+      });
+      // consider other recipes for usage inspiration
+    </script>
+  </body>
+</html>

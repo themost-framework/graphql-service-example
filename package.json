@@ -1,0 +1,61 @@
+{
+  "name": "graphql-example-project",
+  "private": true,
+  "version": "1.0.0",
+  "description": "An example of implementing graphql in @themost-framework",
+  "scripts": {
+    "test": "jasmine",
+    "start": "nodemon src/serve.js",
+    "start:production": "node dist/serve.js",
+    "build": "babel src --out-dir dist --copy-files --verbose"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@themost/common": "^2.7.5",
+    "@themost/data": "^2.9.5",
+    "@themost/query": "^2.9.12",
+    "@themost/test": "^2.3.0",
+    "@themost/xml": "^2.5.2",
+    "express": "^4.18.2",
+    "graphql": "^16.6.0",
+    "graphql-http": "^1.18.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.21.5",
+    "@babel/eslint-parser": "^7.21.8",
+    "@babel/preset-env": "^7.22.2",
+    "@babel/register": "^7.21.0",
+    "@types/supertest": "^2.0.12",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.41.0",
+    "jasmine": "^5.0.0",
+    "jasmine-spec-reporter": "^7.0.0",
+    "module-alias": "^2.2.2",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src",
+      "modules",
+      "spec"
+    ],
+    "delay": 2500,
+    "verbose": true,
+    "legacy-watch": true,
+    "execMap": {
+      "js": "node --require ./spec/helpers/babel --require ./spec/helpers/module-alias"
+    },
+    "env": {
+      "NODE_ENV": "development",
+      "DEBUG": "api:*",
+      "PORT": 8080,
+      "IP": "0.0.0.0"
+    },
+    "ext": "js,json"
+  }
+}
